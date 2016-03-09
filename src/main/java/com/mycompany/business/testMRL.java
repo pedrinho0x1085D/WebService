@@ -13,9 +13,12 @@ public class testMRL {
     public static void main(String[] args) {
         try{
             System.out.println("here!");
-            MyRecordList mrl=MyRecordList.getRecordsFromCSVFile("C:\\Users\\PedroJosé\\Google Drive\\MIEI\\SI\\2-PI\\Archive\\332016_16517PedroCunha.csv");
+            MyRecordList mrl=MyRecordList.getRecordsFromCSVFile("C:\\Users\\PedroJosé\\Google Drive\\MIEI\\SI\\2-PI\\Archive\\832016_143259PedroCunha.csv");
             System.out.println(mrl.getRecords().isEmpty());
-        }
+            System.out.println(mrl.getRecords().size()+" distintos");
+            mrl.addAllRecords(MyRecordList.getRecordsFromCSVFile("C:\\Users\\PedroJosé\\Google Drive\\MIEI\\SI\\2-PI\\Archive\\832016_143259PedroCunha.csv"));
+            System.out.println(mrl.getRecords().size()+" distintos");
+        }   
         catch (Exception e){}
     }
 }

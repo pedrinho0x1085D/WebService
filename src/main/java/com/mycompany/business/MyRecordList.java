@@ -15,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author PedroJosé
  */
-public class MyRecordList implements Serializable{
+public class MyRecordList implements Serializable {
 
     private ArrayList<MyRecord> records;
 
@@ -24,7 +24,15 @@ public class MyRecordList implements Serializable{
     }
 
     public void addRecord(MyRecord mr) {
-        this.records.add(mr);
+        if (!this.records.contains(mr)) {
+            this.records.add(mr);
+        }
+    }
+
+    public void addAllRecords(MyRecordList mrl) {
+        for (MyRecord mr : mrl.getRecords()) {
+            this.addRecord(mr);
+        }
     }
 
     public ArrayList<MyRecord> getRecords() {
@@ -34,7 +42,7 @@ public class MyRecordList implements Serializable{
     public void setRecords(ArrayList<MyRecord> records) {
         this.records = records;
     }
-    
+
     public static MyRecordList getRecordsFromCSVFile(String pathToFile) {
         try {
             MyRecordList mrl = new MyRecordList();
@@ -46,7 +54,7 @@ public class MyRecordList implements Serializable{
                 mrl.addRecord(MyRecord.parseMyRecord(line));
             }
             return mrl;
-        } catch (Exception e) { 
+        } catch (Exception e) {
         }
         return new MyRecordList();
     }

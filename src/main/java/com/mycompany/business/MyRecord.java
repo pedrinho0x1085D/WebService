@@ -424,6 +424,25 @@ public class MyRecord implements Serializable {
         return new MyRecord(username, dateFormat, age, height, weight, sportHist, walkHist, gender, startLat, startLon, startAlt, endLat, endLon, endAlt, distance, heightDiff, currSpeed, avgSpeed, accumSub, accumDesc, totDistanc, modal, carga, diffic);
     }
 
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        } else if (!(this.getClass().getSimpleName()).equals(other.getClass().getSimpleName())) {
+            return false;
+        } else {
+            MyRecord mr = (MyRecord) other;
+            return (username.equals(mr.getUsername()) && dateTime.equals(mr.getDateTime())
+                    && age == mr.getAge() && height == mr.getHeight() && weight == mr.getWeight()
+                    && hasSportHistoric == mr.isHasSportHistoric() && hasWalkingHistoric == mr.isHasWalkingHistoric()
+                    && gender == mr.getGender() && startLat == mr.getStartLat() && startLon == mr.getStartLon()
+                    && startAlt == mr.getStartAlt() && endLat == mr.getEndLat() && endLon == mr.getEndLon() 
+                    && endAlt == mr.getEndAlt() && distance == mr.getDistance() && altDiff == mr.getAltDiff()
+                    && currSpeed == mr.getCurrSpeed() && avgSpeed == mr.getAvgSpeed() && accumSub== mr.getAccumSub()
+                    && accumDesc == mr.getAccumDesc() && totDist == mr.getTotDist() && modal.equals(mr.getModal())
+                    && load==mr.getLoad() && diffic.equals(mr.getDiffic()));
+        }
+    }
+
     private static GregorianCalendar parseGC(String line) {
         String[] firstSplit = line.split(" ");
         String[] date = firstSplit[0].split("-");
