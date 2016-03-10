@@ -28,6 +28,12 @@ public class MyRecord implements Serializable {
     private int load;
     private String diffic;
 
+    public MyRecord() {
+    
+    }
+
+    
+    
     public MyRecord(String username, GregorianCalendar dateTime, int age, int height, int weight, boolean hasSportHistoric, boolean hasWalkingHistoric, char gender, double startLat, double startLon, double startAlt, double endLat, double endLon, double endAlt, float distance, double altDiff, float currSpeed, float avgSpeed, int accumSub, int accumDesc, int totDist, String modal, int load, String diffic) {
         this.username = username;
         this.dateTime = dateTime;
@@ -53,6 +59,35 @@ public class MyRecord implements Serializable {
         this.modal = modal;
         this.load = load;
         this.diffic = diffic;
+    }
+
+    public MyRecord(String username, int dateTime, int age, int height, int weight, boolean hasSportHistoric, boolean hasWalkingHistoric, char gender, double startLat, double startLon, double startAlt, double endLat, double endLon, double endAlt, float distance, double altDiff, float currSpeed, float avgSpeed, int accumSub, int accumDesc, int totDist, String modal, int load, String diffic) {
+        this.username = username;
+        this.dateTime = new GregorianCalendar();
+        this.dateTime.setTimeInMillis(dateTime);
+        this.age = age;
+        this.height = height;
+        this.weight = weight;
+        this.hasSportHistoric = hasSportHistoric;
+        this.hasWalkingHistoric = hasWalkingHistoric;
+        this.gender = gender;
+        this.startLat = startLat;
+        this.startLon = startLon;
+        this.startAlt = startAlt;
+        this.endLat = endLat;
+        this.endLon = endLon;
+        this.endAlt = endAlt;
+        this.distance = distance;
+        this.altDiff = altDiff;
+        this.currSpeed = currSpeed;
+        this.avgSpeed = avgSpeed;
+        this.accumSub = accumSub;
+        this.accumDesc = accumDesc;
+        this.totDist = totDist;
+        this.modal = modal;
+        this.load = load;
+        this.diffic = diffic;
+
     }
 
     /**
@@ -435,11 +470,11 @@ public class MyRecord implements Serializable {
                     && age == mr.getAge() && height == mr.getHeight() && weight == mr.getWeight()
                     && hasSportHistoric == mr.isHasSportHistoric() && hasWalkingHistoric == mr.isHasWalkingHistoric()
                     && gender == mr.getGender() && startLat == mr.getStartLat() && startLon == mr.getStartLon()
-                    && startAlt == mr.getStartAlt() && endLat == mr.getEndLat() && endLon == mr.getEndLon() 
+                    && startAlt == mr.getStartAlt() && endLat == mr.getEndLat() && endLon == mr.getEndLon()
                     && endAlt == mr.getEndAlt() && distance == mr.getDistance() && altDiff == mr.getAltDiff()
-                    && currSpeed == mr.getCurrSpeed() && avgSpeed == mr.getAvgSpeed() && accumSub== mr.getAccumSub()
+                    && currSpeed == mr.getCurrSpeed() && avgSpeed == mr.getAvgSpeed() && accumSub == mr.getAccumSub()
                     && accumDesc == mr.getAccumDesc() && totDist == mr.getTotDist() && modal.equals(mr.getModal())
-                    && load==mr.getLoad() && diffic.equals(mr.getDiffic()));
+                    && load == mr.getLoad() && diffic.equals(mr.getDiffic()));
         }
     }
 

@@ -5,11 +5,18 @@
  */
 package com.mycompany.business;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -59,4 +66,23 @@ public class MyRecordList implements Serializable {
         return new MyRecordList();
     }
 
+    public String toJSonString() throws Exception {
+        ObjectWriter jsonWriter = new ObjectMapper().writer();
+        return jsonWriter.writeValueAsString(this.records);
+    }
+
+    public static MyRecordList JSonToObj(String json) throws IOException {
+        MyRecordList mrl = new MyRecordList();
+        ObjectMapper mapper = new ObjectMapper();
+        List<MyRecord> lista;
+        lista = mapper.readValue(json, TypeFactory.defaultInstance().constructCollectionType(List.class,
+                MyRecord.class));
+        ArrayList<MyRecord> list = new ArrayList<>();
+        lista.stream().forEach((mr) -> {
+            list.add(mr);
+        });
+        mrl.setRecords(list);
+
+        return mrl;
+    }
 }
