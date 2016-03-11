@@ -5,9 +5,10 @@
  */
 package com.mycompany.business;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+/*import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.databind.type.TypeFactory;*/
+import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -66,6 +67,16 @@ public class MyRecordList implements Serializable {
         return new MyRecordList();
     }
 
+    public String toJsonString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
+
+    public static MyRecordList fromJsonString(String json) {
+        Gson gson = new Gson();
+        return (MyRecordList) gson.fromJson(json, MyRecordList.class);
+    }
+    /*
     public String toJSonString() throws Exception {
         ObjectWriter jsonWriter = new ObjectMapper().writer();
         return jsonWriter.writeValueAsString(this.records);
@@ -84,5 +95,5 @@ public class MyRecordList implements Serializable {
         mrl.setRecords(list);
 
         return mrl;
-    }
+    }*/
 }

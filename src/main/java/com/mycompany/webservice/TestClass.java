@@ -12,15 +12,16 @@ public class TestClass {
             MyRecordList myRL, testParsing;
             myRL = MyRecordList.getRecordsFromCSVFile(req.queryParams("file"));
             System.out.println(myRL.getRecords().size());
-            String json = myRL.toJSonString();
+            String json = myRL.toJsonString();
             try {
                 System.out.println(json);
-                MyRecordList mrl2=MyRecordList.JSonToObj(json);
-                System.out.println(mrl2.toJSonString());
+                MyRecordList mrl2=MyRecordList.fromJsonString(json);
+                System.out.println(mrl2.toJsonString());
+                System.out.println(mrl2.getRecords().size());
             } catch (Exception e) {
                 System.out.println("Exception!");
             }
-            return json;
+            return "ok";
         });
     }
 
