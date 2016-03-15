@@ -425,7 +425,15 @@ public class MyRecord implements Serializable {
     public void setDiffic(String diffic) {
         this.diffic = diffic;
     }
-
+    
+    public int getSportHistAsInt(){
+        return (hasSportHistoric) ? 1 : 0;
+    }
+    
+    public int getWalkingHistAsInt(){
+        return (hasWalkingHistoric) ? 1 : 0;
+    }
+    
     public static MyRecord parseMyRecord(String str) {
         String[] aux = str.split(",");
         String[] fields = new String[aux.length];
