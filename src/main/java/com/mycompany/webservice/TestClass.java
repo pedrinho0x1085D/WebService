@@ -28,9 +28,14 @@ public class TestClass {
             return "ok";
         });
         get("/eval", (req, repl) -> {
-            //select * from section records.
+            try{
+            MyRecordList mrl=DatabaseConnect.selectAll();
+            System.out.println(mrl.getRecords().size());
+            return ""+mrl.getRecords().size()+" records available";
+            }
+            catch(Exception e){return "err";}
             //manda para avaliador; obtém resposta manda de volta.            
-            return "ok";
+            
             
         });
     }

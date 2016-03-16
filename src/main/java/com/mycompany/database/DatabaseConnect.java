@@ -9,8 +9,10 @@ import com.mycompany.business.MyRecord;
 import com.mycompany.business.MyRecordList;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.GregorianCalendar;
 
 /**
  *
@@ -21,7 +23,7 @@ public class DatabaseConnect {
     static final String className = "com.mysql.jdbc.Driver";
     static final String url = "jdbc:mysql://localhost:3306/";
     static final String insertHeader = "INSERT INTO `raterCases`.`SectionRecord` VALUES";
-    static final String selectSQL = "SELECT * FROM `raterCases`.`SectionRecord`";
+    static final String selectSQL = "SELECT * FROM `raterCases`.`SectionRecord`;";
 
     public static void create() throws SQLException, ClassNotFoundException {
         Class.forName(className);
@@ -102,8 +104,41 @@ public class DatabaseConnect {
         connect.close();
     }
 
-    public static MyRecordList selectAll() {
-        //TODO!
-        return new MyRecordList();
+    public static MyRecordList selectAll() throws Exception{
+        MyRecordList mrl=new MyRecordList();
+        Class.forName(className);
+        Connection connect = DriverManager.getConnection(url, "root", "");
+        Statement stat=connect.createStatement();
+        ResultSet recordset=stat.executeQuery(selectSQL);
+        while(recordset.next()){
+            String username=recordset.getNString(1);
+            GregorianCalendar gc=DBUtils.fromSQL(recordset.getDate(2));
+            int age=recordset.getInt(3);
+            int height=recordset.getInt(4);
+            int weight=recordset.getInt(5);
+            boolean hasSportHist=recordset.getBoolean(6);
+            boolean hasWalkHist=recordset.getBoolean(7);
+            char gender=recordset.getString(8).charAt(0);
+            double startLat=recordset.getDouble(9);
+            double startLon=recordset.getDouble(10);
+            double startAlt=recordset.getDouble(11);
+            double endLat=recordset.getDouble(12);
+            double endLon=recordset.getDouble(13);
+            double endAlt=recordset.getDouble(14);
+            float distance=recordset.getFloat(15);
+            double altDiff=recordset.getDouble(16);
+            float currSpd=recordset.getFloat(17);
+            float avgSpd=recordset.getFloat(18);
+            int accumSub=recordset.getInt(19);
+            int accumDesc=recordset.getInt(20);
+            int totDist=recordset.getInt(21);
+            String modal=recordset.getString(22);
+            int load=recordset.getInt(23);
+            String diffic=recordset.getString(24);
+            mrl.addRecord(new MyRecord(username, gc, age, height, weight, hasSportHist, hasWalkHist, gender, startLat, startLon, startAlt, endLat, endLon, endAlt, distance, altDiff, currSpd, avgSpd, accumSub, accumDesc, totDist, modal, load, diffic));
+        }
+        recordset.close();
+        connect.close();
+        return mrl;
     }
 }
