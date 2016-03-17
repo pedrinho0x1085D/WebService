@@ -41,8 +41,6 @@ public class DatabaseConnect {
         connect.close();
         connect = DriverManager.getConnection(Fullurl, "root", "");
         createTabIfNeeded(connect);
-        //createFun(connect);
-        //createTrigger(connect);
         connect.close();
     }
     
@@ -97,7 +95,6 @@ public class DatabaseConnect {
                 + "  `diffic` INT NOT NULL"
                 + "  )"
                 + "ENGINE = InnoDB;");
-        System.out.println("atencao");
         /*
         Creating Body Mass Index Function;
          */
@@ -236,77 +233,7 @@ public class DatabaseConnect {
         stat.close();
         connect.close();
     }
-    
-    private static void createFun(Connection conn) throws SQLException {
-        Statement ps = conn.createStatement();
-        System.out.println("aqui1");
-        ps.executeUpdate("USE ratercases;");
-        System.out.println("a usar ratercases");
-        
-        ps.execute("DELIMITER $$"
-                + "CREATE FUNCTION `ratercases`.`genderToInt` (gender char)"
-                + "RETURNS INTEGER"
-                + "BEGIN"
-                + "CASE(gender)"
-                + "	WHEN 'M' then return 0;"
-                + "    else return 1;"
-                + "END CASE;"
-                + "END $$"
-                + "DELIMITER ;");
-        System.out.println("criado gen2I");
-        ps.execute("DELIMITER $$"
-                + "CREATE FUNCTION `ratercases`.`SectionAvgAltitude` (AI DOUBLE, AF DOUBLE)"
-                + "RETURNS DOUBLE"
-                + "BEGIN"
-                + "RETURN (AI+AF)/2;"
-                + "END $$"
-                + "DELIMITER ;");
-        System.out.println("criado saa");
-        ps.execute("DELIMITER $$"
-                + "CREATE FUNCTION `ratercases`.`AgeToGroup` (Age INT)"
-                + "RETURNS INTEGER"
-                + "BEGIN"
-                + "DECLARE grupo INTEGER;"
-                + "CASE "
-                + "	WHEN(Age<18) then set grupo=0;"
-                + "    WHEN(Age BETWEEN 18 AND 24) then set grupo=1;"
-                + "    WHEN(Age BETWEEN 25 AND 35) then set grupo=2;"
-                + "    WHEN(Age BETWEEN 36 AND 45) then set grupo=3;"
-                + "    WHEN(Age BETWEEN 46 AND 54) then set grupo=4;"
-                + "    WHEN(Age BETWEEN 55 AND 65) then set grupo=5;"
-                + "    ELSE set grupo=6;"
-                + "END CASE;"
-                + "return grupo;"
-                + "END $$"
-                + "DELIMITER ;");
-        System.out.println("criado ageband");
-        ps.execute("DELIMITER $$"
-                + "CREATE FUNCTION `ratercases`.`ModalToInt` (Modal VARCHAR(45))"
-                + "RETURNS INTEGER"
-                + "BEGIN"
-                + "CASE (Modal)"
-                + "	WHEN 'Caminhada' then return 0;"
-                + "    ELSE return 1;"
-                + "END CASE;"
-                + "END $$"
-                + "DELIMITER ;");
-        System.out.println("criado m2i");
-        ps.execute("DELIMITER $$"
-                + "CREATE FUNCTION `DifficToInt` (Diffic ENUM('easy','medium','hard'))"
-                + "RETURNS INTEGER"
-                + "BEGIN"
-                + "CASE (Diffic)"
-                + "	WHEN 'easy' then return 0;"
-                + "    WHEN 'medium' then return 1;"
-                + "    else return 2;"
-                + "END CASE;"
-                + "END $$"
-                + "DELIMITER ;"
-        );
-        System.out.println("criado d2i");
-        ps.close();
-    }
-    
+
     public static MyRecordList selectAll() throws Exception {
         MyRecordList mrl = new MyRecordList();
         Class.forName(className);

@@ -45,8 +45,6 @@ public class TestClass {
                 MyRecordList mrl = DatabaseConnect.selectAll();
                 
                 System.out.println(mrl.getRecords().size());
-                repl.body(mrl.getRecords().size()+"");
-                repl.redirect(req.host());
                 return "" + mrl.getRecords().size() + " records available";
             } catch (Exception e) {
                 return "err";
