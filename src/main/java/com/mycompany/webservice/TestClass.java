@@ -18,12 +18,13 @@ public class TestClass {
         post("/insert", (req, repl) -> {
             String json = req.body();
             MyRecordList myRL = MyRecordList.fromJsonString(json);
+            System.out.println(myRL.getRecords().size());
             for (MyRecord mr : myRL.getRecords()) {
                 try {
                     DatabaseConnect.insertInto(mr);
                 } catch (Exception e) {
                 }
-
+                System.out.println("Done");
             }
             return "ok";
         });
