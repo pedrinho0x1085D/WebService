@@ -10,11 +10,12 @@ public class TestClass {
     public static void main(String[] args) {
         try {
             DatabaseConnect.create();
+            ipAddress("127.132.156.20");
         } catch (Exception e) {
             System.out.println("deu estrondo mano");
             e.printStackTrace();
         }
-        get("/hello", (req, repl) -> req.toString());
+        get("/hello", (req, repl) -> "sup??");
         post("/insert", (req, repl) -> {
             String json = req.body();
             MyRecordList myRL = MyRecordList.fromJsonString(json);
