@@ -20,7 +20,7 @@ public class DBUtils {
         if (o == null) {
             return "NULL";
         } else {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             return "'" + df.format(o.getTime()) + "'";
         }
     }

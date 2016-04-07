@@ -72,4 +72,45 @@ CASE (Diffic)
 END CASE;
 END $$
 DELIMITER ;
+Drop function if Exists `latLonToRegion`;
+DELIMITER $$
+
+CREATE FUNCTION `latLonToRegion` (startLat double, startLon double, endLat double, endLon double)
+RETURNS VARCHAR(50)
+BEGIN
+declare avgLat double;
+declare avgLon double;
+SET avgLat=(startLat+endLat)/2;
+SET avgLon=(endLon+startLon)/2;
+CASE
+	WHEN avgLat between 36.965003 and 37.408667 then return 'Algarve';
+    WHEN avgLat between 37.408667 and 38.374813 then return 'Alentejo';
+    WHEN avgLat between 38.374813 and 39.754828 then return 'Estremadura e Ribatejo';
+    WHEN avgLat between 39.754828 and 40.96941 then return 'Beiras';
+    WHEN avgLat between 40.96941 and 42.154295 then CASE
+		When avgLon between -8.875645 and -7.804478 then return 'Minho e Douro';
+        When avgLon between -7.804478 and -6.189488 then return 'Tras os Montes';
+        ELSE return 'Outra';
+        END CASE;
+	ELSE return 'Outra';
+END CASE;
+END;
+
+Delimiter ;
+Drop function if exists `percentUphill`;
+DELIMITER $$
+CREATE FUNCTION `percentUphill` (accumSub integer, totDist integer)
+RETURNS Double
+BEGIN
+RETURN (accumSub/totDist)*100;
+END;
+DELIMITER ;
+Drop function if exists `percentDownhill`;
+Delimiter $$
+CREATE FUNCTION `percentDownhill` (accumDesc integer, totDist integer)
+RETURNS double
+BEGIN
+RETURN (accumDesc/totDist)*100;
+END;
+Delimiter ;
 
