@@ -83,10 +83,10 @@ declare avgLon double;
 SET avgLat=(startLat+endLat)/2;
 SET avgLon=(endLon+startLon)/2;
 CASE
-	WHEN avgLat between 36.965003 and 37.408667 then return 'Algarve';
-    WHEN avgLat between 37.408667 and 38.374813 then return 'Alentejo';
-    WHEN avgLat between 38.374813 and 39.754828 then return 'Estremadura e Ribatejo';
-    WHEN avgLat between 39.754828 and 40.96941 then return 'Beiras';
+	WHEN avgLat between 36.965003 and 37.408667 then if(avgLon between -9.000971 and -7.395594) then return 'Algarve' ;else return 'Outra'; end if;
+    WHEN avgLat between 37.408667 and 38.374813 then if(avgLon between -8.883119 and -6.935792) then return 'Alentejo' ;else return 'Outra'; end if;
+    WHEN avgLat between 38.374813 and 39.754828 then if(avgLon between -9.500805 and -6.867947) then return 'Estremadura e Ribatejo'; else return 'Outra'; end if;
+    WHEN avgLat between 39.754828 and 40.96941 then if(avgLon between -9.059689 and -6.796250) then return 'Beiras'; else return 'Outra'; end if;
     WHEN avgLat between 40.96941 and 42.154295 then CASE
 		When avgLon between -8.875645 and -7.804478 then return 'Minho e Douro';
         When avgLon between -7.804478 and -6.189488 then return 'Tras os Montes';
