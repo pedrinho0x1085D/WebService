@@ -2,71 +2,70 @@ package com.mycompany.webservice;
 
 import com.mycompany.business.MyRecord;
 import com.mycompany.business.MyRecordList;
-import com.mycompany.database.DatabaseConnect;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static spark.Spark.*;
+import weka.classifiers.trees.J48;
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
 
 public class TestClass {
 
     public static void main(String[] args) {
+
         port(getHerokuAssignedPort());
-
-        try {
-            DatabaseConnect.create();
-        } catch (Exception e) {
-            System.out.println("deu estrondo mano");
-            e.printStackTrace();
-        }
-
-        get(
-                "/hello", (req, repl) -> {
-                    System.out.println("sup");
-                    return "sup??";
-                }
-        );
-        post(
+        Instances trainset = new Instances("AnalysisRecords", attrInfo(), 25000);
+        trainset.setClass(trainset.attribute(23));
+        get("/hello", (req, repl) -> {
+            System.out.println("sup??");
+            return "<p>" + trainset.numInstances() + "</p><p>" + trainset.numAttributes() + "</p>";
+        });
+        /*post(
                 "/insert", (req, repl) -> {
                     String json = req.body();
                     MyRecordList myRL = MyRecordList.fromJsonString(json);
-                    System.out.println(myRL.getRecords().size());
-                    for (MyRecord mr : myRL.getRecords()) {
+                    return "" + myRL.getRecords().size();
+                    /*for (MyRecord mr : myRL.getRecords()) {
                         try {
                             DatabaseConnect.insertInto(mr);
                         } catch (Exception e) {
                         }
                         System.out.println("Done");
                     }
-                    return "ok";
-                }
-        );
-        get(
-                "/test", (req, repl) -> {
-                    MyRecordList myRL;
-                    myRL = MyRecordList.fromJsonString(MyRecordList.getRecordsFromCSVFile(req.queryParams("file")).toJsonString());
-                    System.out.println(myRL.getRecords().size());
-                    for (MyRecord mr : myRL.getRecords()) {
-                        try {
-                            DatabaseConnect.insertInto(mr);
-                        } catch (Exception e) {
-                        }
-                    }
-                    return "ok";
-                }
-        );
-        get(
-                "/eval", (req, repl) -> {
-                    try {
-                        //lista = parse from req; 
-                        MyRecordList mrl = DatabaseConnect.selectAll();
-
-                        System.out.println(mrl.getRecords().size());
-                        return "" + mrl.getRecords().size() + " records available";
-                    } catch (Exception e) {
-                        return "err";
-                    }
-                    //manda para avaliador; obtém resposta manda de volta.            
 
                 }
+        );*/
+        get("/test", (req, repl) -> {
+            MyRecordList myRL;
+            myRL = MyRecordList.getRecordsFromCSVFile(req.queryParams("file"));
+            System.out.println(myRL.getRecords().size());
+            for (MyRecord mr : myRL.getRecords()) {
+                Instance inst = mr.toWekaInstance(trainset);
+                trainset.add(inst);
+            }
+            return trainset.numInstances();
+
+        }
         );
+
+        get("/buildClassifier", (req, repl) -> {
+            J48 classifier = new J48();
+            try {
+                classifier.setOptions(weka.core.Utils.splitOptions("-C 0.25 -M 2"));
+            } catch (Exception e) {
+                System.out.println("estrondo no parsing de opções ó mano");
+            }
+            String toSend = "";
+            try {
+                classifier.buildClassifier(trainset);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            toSend = classifier.prefix();
+            return toSend;
+        });
     }
 
     static int getHerokuAssignedPort() {
@@ -77,4 +76,36 @@ public class TestClass {
         return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
     }
 
+    static FastVector attrInfo() {
+        FastVector returnVect = new FastVector();
+        FastVector difficValues = new FastVector();
+        difficValues.addElement("easy");
+        difficValues.addElement("medium");
+        difficValues.addElement("hard");
+        returnVect.addElement(new Attribute("ageband"));
+        returnVect.addElement(new Attribute("imc"));
+        returnVect.addElement(new Attribute("weight"));
+        returnVect.addElement(new Attribute("hasSportHistoric"));
+        returnVect.addElement(new Attribute("hasWalkingHistoric"));
+        returnVect.addElement(new Attribute("gender"));
+        returnVect.addElement(new Attribute("avgalt"));
+        returnVect.addElement(new Attribute("dist"));
+        returnVect.addElement(new Attribute("altDiff"));
+        returnVect.addElement(new Attribute("currSpd"));
+        returnVect.addElement(new Attribute("avgSpd"));
+        returnVect.addElement(new Attribute("accumSub"));
+        returnVect.addElement(new Attribute("accumDesc"));
+        returnVect.addElement(new Attribute("totDist"));
+        returnVect.addElement(new Attribute("modal"));
+        returnVect.addElement(new Attribute("load"));
+        returnVect.addElement(new Attribute("region"));
+        returnVect.addElement(new Attribute("percentUphill"));
+        returnVect.addElement(new Attribute("percentDownhill"));
+        returnVect.addElement(new Attribute("day"));
+        returnVect.addElement(new Attribute("month"));
+        returnVect.addElement(new Attribute("hour"));
+        returnVect.addElement(new Attribute("minute"));
+        returnVect.addElement(new Attribute("diffic", difficValues));
+        return returnVect;
+    }
 }

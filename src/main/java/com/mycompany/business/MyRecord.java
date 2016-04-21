@@ -6,7 +6,12 @@
 package com.mycompany.business;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
 
 /**
  *
@@ -29,11 +34,9 @@ public class MyRecord implements Serializable {
     private String diffic;
 
     public MyRecord() {
-    
+
     }
 
-    
-    
     public MyRecord(String username, GregorianCalendar dateTime, int age, int height, int weight, boolean hasSportHistoric, boolean hasWalkingHistoric, char gender, double startLat, double startLon, double startAlt, double endLat, double endLon, double endAlt, float distance, double altDiff, float currSpeed, float avgSpeed, int accumSub, int accumDesc, int totDist, String modal, int load, String diffic) {
         this.username = username;
         this.dateTime = dateTime;
@@ -425,15 +428,15 @@ public class MyRecord implements Serializable {
     public void setDiffic(String diffic) {
         this.diffic = diffic;
     }
-    
-    public int getSportHistAsInt(){
+
+    public int getSportHistAsInt() {
         return (hasSportHistoric) ? 1 : 0;
     }
-    
-    public int getWalkingHistAsInt(){
+
+    public int getWalkingHistAsInt() {
         return (hasWalkingHistoric) ? 1 : 0;
     }
-    
+
     public static MyRecord parseMyRecord(String str) {
         String[] aux = str.split(",");
         String[] fields = new String[aux.length];
@@ -497,5 +500,128 @@ public class MyRecord implements Serializable {
         int minute = Integer.parseInt(time[1]);
         int seconds = Integer.parseInt(time[2]);
         return new GregorianCalendar(year, month - 1, day, hour, minute, seconds);
+    }
+
+    private int ageBand() {
+        if (age < 18) {
+            return 0;
+        } else if (age >= 18 && age < 24) {
+            return 1;
+        } else if (age >= 24 && age < 35) {
+            return 2;
+        } else if (age >= 35 && age < 45) {
+            return 3;
+        } else if (age >= 45 && age < 54) {
+            return 4;
+        } else if (age >= 54 && age < 65) {
+            return 5;
+        } else {
+            return 6;
+        }
+    }
+
+    private double imc() {
+        double metHeight = height / 100;
+        double sqMH = metHeight * metHeight;
+        return weight / sqMH;
+    }
+
+    private int intSH() {
+        return (hasSportHistoric) ? 1 : 0;
+    }
+
+    private int intWH() {
+        return (hasWalkingHistoric) ? 1 : 0;
+    }
+
+    private int intGender() {
+        return (gender == 'M') ? 0 : 1;
+    }
+
+    private double avgAlt() {
+        return (startAlt + endAlt) / 2;
+    }
+
+    private int modalToInt() {
+        return (modal.equalsIgnoreCase("Caminhada")) ? 0 : 1;
+    }
+
+    private int region() {
+        double avgLat = (startLat + endLat) / 2;
+        double avgLon = (startLon + endLon) / 2;
+        if (between(avgLat, 36.965003, 37.408667) && between(avgLon, -9.000971, -7.395594)) {
+            return 5;
+        } else if (between(avgLat, 37.408667, 38.374813) && between(avgLon, -8.883119, -6.935792)) {
+            return 4;
+        } else if (between(avgLat, 38.374813, 39.754828) && between(avgLon, -9.500805, -6.867947)) {
+            return 3;
+        } else if (between(avgLat, 39.754828, 40.96941) && between(avgLon, -9.059689, -6.796250)) {
+            return 2;
+        } else if (between(avgLat, 40.96941, 42.154295) && between(avgLon, -8.875645, -7.804478)) {
+            return 0;
+        } else if (between(avgLat, 40.96941, 42.154295) && between(avgLon, -7.804478, -6.189488)) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+
+    private boolean between(double val, double llim, double ulim) {
+        return (val >= llim && val <= ulim);
+    }
+    
+    private double percentUphill(){
+        return (accumSub/totDist)*100;
+    }
+    
+    private double percentDownhill(){
+        return (accumDesc/totDist)*100;
+    }
+
+    private int hour(){
+        return this.dateTime.get(Calendar.HOUR_OF_DAY);
+    }
+    
+    private int minute(){
+        return this.dateTime.get(Calendar.MINUTE);
+    }
+    
+    private int month(){
+        return this.dateTime.get(Calendar.MONTH)+1;
+    }
+    
+    private int day(){
+        return this.dateTime.get(Calendar.DAY_OF_MONTH);
+    }
+    
+    public Instance toWekaInstance(Instances instas) {
+        Instance inst = new Instance(24);
+        inst.setDataset(instas);
+        inst.setValue(0, ageBand());
+        inst.setValue(1, imc());
+        inst.setValue(2, height);
+        inst.setValue(3, weight);
+        inst.setValue(4, intSH());
+        inst.setValue(5, intWH());
+        inst.setValue(6, intGender());
+        inst.setValue(7, avgAlt());
+        inst.setValue(8, distance);
+        inst.setValue(9, altDiff);
+        inst.setValue(10, currSpeed);
+        inst.setValue(11, avgSpeed);
+        inst.setValue(12, accumSub);
+        inst.setValue(13, accumDesc);
+        inst.setValue(14, modalToInt());
+        inst.setValue(15, load);
+        inst.setValue(16, region());
+        inst.setValue(17, percentUphill());
+        inst.setValue(18, percentDownhill());
+        inst.setValue(19, day());
+        inst.setValue(20, month());
+        inst.setValue(21, hour());
+        inst.setValue(22, minute());
+        inst.setValue(23, diffic);
+        //percentUphill,percentDownhill,day,month,hour,minute,diffic
+        return inst;
     }
 }
