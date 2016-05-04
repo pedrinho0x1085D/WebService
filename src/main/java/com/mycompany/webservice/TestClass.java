@@ -12,31 +12,31 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 public class TestClass {
-
+    
     public static void main(String[] args) {
-
+        
         port(getHerokuAssignedPort());
         Instances trainset = new Instances("AnalysisRecords", attrInfo(), 25000);
         trainset.setClass(trainset.attribute(23));
         get("/hello", (req, repl) -> {
             System.out.println("sup??");
-            return "<p>" + trainset.numInstances() + "</p><p>" + trainset.numAttributes() + "</p>";
+            return "sup??";
         });
-        /*post(
-                "/insert", (req, repl) -> {
-                    String json = req.body();
-                    MyRecordList myRL = MyRecordList.fromJsonString(json);
-                    return "" + myRL.getRecords().size();
-                    /*for (MyRecord mr : myRL.getRecords()) {
-                        try {
-                            DatabaseConnect.insertInto(mr);
-                        } catch (Exception e) {
-                        }
-                        System.out.println("Done");
-                    }
-
-                }
-        );*/
+        post("/insert", (req, repl) -> {
+            String json=new String(req.bodyAsBytes());
+            MyRecordList myRL=MyRecordList.fromJsonString(json);
+            for (MyRecord mr : myRL.getRecords()) {
+                Instance inst = mr.toWekaInstance(trainset);
+                trainset.add(inst);
+            }       
+            
+            return "ok";
+        });
+        
+        get("/jsonFromCSV", (req,repl)->{
+            return MyRecordList.getRecordsFromCSVFile(req.queryParams("file")).toJsonString();
+        });
+        
         get("/test", (req, repl) -> {
             MyRecordList myRL;
             myRL = MyRecordList.getRecordsFromCSVFile(req.queryParams("file"));
@@ -49,7 +49,6 @@ public class TestClass {
 
         }
         );
-
         get("/buildClassifier", (req, repl) -> {
             J48 classifier = new J48();
             try {
