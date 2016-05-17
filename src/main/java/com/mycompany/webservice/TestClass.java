@@ -10,7 +10,10 @@ import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
-
+/*
+http://stackoverflow.com/questions/14073874/interpretation-of-classification-in-weka -> Resultados do classify;
+VER A CENA DA ULTIMA POSIÇÃO DA INSTANCIA
+*/
 public class TestClass {
     
     public static void main(String[] args) {
