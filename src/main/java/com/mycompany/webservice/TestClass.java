@@ -2,6 +2,9 @@ package com.mycompany.webservice;
 
 import com.mycompany.business.MyRecord;
 import com.mycompany.business.MyRecordList;
+import com.mycompany.business.RaterReply;
+import com.mycompany.business.RaterRequest;
+import com.mycompany.business.ReplyNode;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static spark.Spark.*;
@@ -10,14 +13,15 @@ import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
+
 /*
 http://stackoverflow.com/questions/14073874/interpretation-of-classification-in-weka -> Resultados do classify;
 VER A CENA DA ULTIMA POSIÇÃO DA INSTANCIA
-*/
+ */
 public class TestClass {
-    
+
     public static void main(String[] args) {
-        
+
         port(getHerokuAssignedPort());
         Instances trainset = new Instances("AnalysisRecords", attrInfo(), 25000);
         trainset.setClass(trainset.attribute(23));
@@ -26,20 +30,20 @@ public class TestClass {
             return "sup??";
         });
         post("/insert", (req, repl) -> {
-            String json=new String(req.bodyAsBytes());
-            MyRecordList myRL=MyRecordList.fromJsonString(json);
+            String json = new String(req.bodyAsBytes());
+            MyRecordList myRL = MyRecordList.fromJsonString(json);
             for (MyRecord mr : myRL.getRecords()) {
                 Instance inst = mr.toWekaInstance(trainset);
                 trainset.add(inst);
-            }       
-            
+            }
+
             return "ok";
         });
-        
-        get("/jsonFromCSV", (req,repl)->{
+
+        get("/jsonFromCSV", (req, repl) -> {
             return MyRecordList.getRecordsFromCSVFile(req.queryParams("file")).toJsonString();
         });
-        
+
         get("/test", (req, repl) -> {
             MyRecordList myRL;
             myRL = MyRecordList.getRecordsFromCSVFile(req.queryParams("file"));
@@ -67,6 +71,32 @@ public class TestClass {
             }
             toSend = classifier.prefix();
             return toSend;
+        });
+        post("/classify", (req, rep) -> {
+            RaterRequest rr = RaterRequest.fromJSON(new String(req.bodyAsBytes()));
+            RaterReply rrp = new RaterReply();
+            MyRecordList myRL = rr.generateMyRL();
+            J48 classifier = new J48();
+            try {
+                classifier.setOptions(weka.core.Utils.splitOptions("-C 0.25 -M 2"));
+            } catch (Exception e) {
+                System.out.println("estrondo no parsing de opções ó mano");
+            }
+            try {
+                classifier.buildClassifier(trainset);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Instances testSet = new Instances("TestCases", attrInfo(), myRL.getRecords().size());
+            testSet.setClass(testSet.attribute(23));
+            for (MyRecord mr : myRL.getRecords()) {
+                /*Classify Instance*/
+                Instance inst = mr.toWekaInstance(testSet);
+                double result = classifier.classifyInstance(inst);
+                String diffic = testSet.classAttribute().value((int) result);
+                rrp.addNode(new ReplyNode(mr.getStartLat(), mr.getStartLon(), mr.getEndLat(), mr.getEndLon(), diffic));
+            }
+            return rrp.toJSONString();
         });
     }
 

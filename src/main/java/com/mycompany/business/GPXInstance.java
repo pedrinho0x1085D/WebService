@@ -14,18 +14,14 @@ import java.util.GregorianCalendar;
 public class GPXInstance {
 
     private double latitude, longitude, elevation;
-    private GregorianCalendar datetime;
 
-    public GPXInstance(double latitude, double longitude, double elevation, GregorianCalendar datetime) {
+
+    public GPXInstance(double latitude, double longitude, double elevation) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.elevation = elevation;
-        this.datetime = (GregorianCalendar) datetime.clone();
     }
 
-    public GregorianCalendar getDatetime() {
-        return datetime;
-    }
 
     public double getElevation() {
         return elevation;
@@ -39,10 +35,7 @@ public class GPXInstance {
         return longitude;
     }
 
-    public void setDatetime(GregorianCalendar datetime) {
-        this.datetime = datetime;
-    }
-
+   
     public void setElevation(double elevation) {
         this.elevation = elevation;
     }
@@ -73,14 +66,9 @@ public class GPXInstance {
         return this.elevation - other.getElevation();
     }
 
-    public double timeDiff(GPXInstance other) {
-        long thismilis = this.datetime.getTimeInMillis();
-        long othermilis = other.getDatetime().getTimeInMillis();
-        return (thismilis - othermilis) / 1000;
-    }
-
+    
     public float speed(GPXInstance other) {
-        return this.distanceTo(other) / (float) Math.abs(this.timeDiff(other));
+        return this.distanceTo(other) / (float) Math.abs(2);
     }
 
 }

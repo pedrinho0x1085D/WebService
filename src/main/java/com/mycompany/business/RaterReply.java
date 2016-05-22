@@ -15,6 +15,10 @@ import java.util.ArrayList;
 public class RaterReply {
 
     ArrayList<ReplyNode> points;
+    
+    public RaterReply (){
+        this.points=new ArrayList<>();
+    }
 
     public RaterReply(ArrayList<ReplyNode> points) {
         this.points = points;
@@ -27,7 +31,11 @@ public class RaterReply {
     public void setPoints(ArrayList<ReplyNode> points) {
         this.points = points;
     }
-
+    
+    public void addNode(ReplyNode rn){
+        this.points.add(rn);
+    }
+    
     public static RaterReply fromJSON(String json) {
         Gson gson = new Gson();
         return (RaterReply) gson.fromJson(json, RaterReply.class);

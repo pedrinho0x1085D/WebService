@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package com.mycompany.business;
-
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -121,7 +120,7 @@ public class RaterRequest {
     }
 
     private MyRecord genRecord(GPXInstance lastKn, GPXInstance inst, User user, int load, int accumSub, int accumDesc, int totDist, float totSpd, int totRecs) {
-        MyRecord r=new MyRecord(user.getUsername(), timeOfPractice, user.getAge(), user.getHeight(), user.getWeight(), user.isHasSportHistoric(), user.isHasWalkingHistoric(), user.getGender(), lastKn.getLatitude(), lastKn.getLongitude(), lastKn.getElevation(), inst.getLatitude(), inst.getLongitude(), inst.getElevation(), lastKn.distanceTo(inst), inst.heightDiff(lastKn),inst.speed(lastKn), totSpd/totRecs, accumSub, accumDesc, totDist, "Caminhada", load, "medium");
+        MyRecord r=new MyRecord(user.getName(), timeOfPractice, user.getAge(), user.getHeight(), user.getWeight(), user.HasSportHistoric(), user.HasWalkingHistoric(), user.getGender(), lastKn.getLatitude(), lastKn.getLongitude(), lastKn.getElevation(), inst.getLatitude(), inst.getLongitude(), inst.getElevation(), lastKn.distanceTo(inst), inst.heightDiff(lastKn),inst.speed(lastKn), totSpd/totRecs, accumSub, accumDesc, totDist, "Caminhada", load, "medium");
         return r;
     }
 }
